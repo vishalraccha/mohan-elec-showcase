@@ -47,6 +47,13 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Electronics Theme Colors
+        electric: {
+          blue: "hsl(var(--electric-blue))",
+          cyan: "hsl(var(--tech-cyan))",
+          green: "hsl(var(--circuit-green))",
+          purple: "hsl(var(--neon-purple))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -84,6 +91,21 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        glow: "glow 2s ease-in-out infinite alternate",
+        float: "float 3s ease-in-out infinite",
+        circuit: "circuit 4s linear infinite",
+        "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+      },
+      backgroundImage: {
+        "gradient-primary": "var(--gradient-primary)",
+        "gradient-tech": "var(--gradient-tech)",
+        "gradient-electric": "var(--gradient-electric)",
+        "gradient-glow": "var(--gradient-glow)",
+      },
+      boxShadow: {
+        glow: "var(--shadow-glow)",
+        tech: "var(--shadow-tech)",
+        electric: "var(--shadow-electric)",
       },
     },
   },
