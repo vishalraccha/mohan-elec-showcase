@@ -1,10 +1,128 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Phone, Mail, MapPin, Clock, MessageSquare, Send } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import BuyForm from "./BuyForm";
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    service: "",
+    message: ""
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [buyFormOpen, setBuyFormOpen] = useState(false);
+  const { toast } = useToast();
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const validateContactForm = () => {
+    if (!formData.name.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter your name",
+        variant: "destructive",
+      });
+      return false;
+    }
+    if (!formData.phone.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter your phone number",
+        variant: "destructive",
+      });
+      return false;
+    }
+    if (!formData.service) {
+      toast({
+        title: "Error",
+        description: "Please select a service",
+        variant: "destructive",
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateContactForm()) return;
+
+    setIsSubmitting(true);
+
+    try {
+      // WhatsApp message
+      const whatsappMessage = `*Contact Form - Mohan Electronics*
+
+*Customer Details:*
+Name: ${formData.name}
+Phone: ${formData.phone}
+
+*Service Required:* ${formData.service}
+*Message:* ${formData.message || 'No additional message'}
+
+*Time:* ${new Date().toLocaleString()}`;
+
+      const whatsappUrl = `https://wa.me/919370426583?text=${encodeURIComponent(whatsappMessage)}`;
+      
+      // Email via mailto
+      const emailSubject = `Contact Form - ${formData.service} - ${formData.name}`;
+      const emailBody = `Dear Mohan Electronics,
+
+Contact Form Submission:
+
+Customer Details:
+- Name: ${formData.name}
+- Phone: ${formData.phone}
+
+Service Required: ${formData.service}
+Message: ${formData.message || 'No additional message'}
+
+Please contact me regarding this inquiry.
+
+Best regards,
+${formData.name}`;
+
+      const emailUrl = `mailto:maheshsindam24@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+
+      // Open both WhatsApp and email
+      window.open(whatsappUrl, '_blank');
+      setTimeout(() => {
+        window.open(emailUrl, '_blank');
+      }, 1000);
+
+      toast({
+        title: "Message Sent!",
+        description: "Your message has been sent via WhatsApp and email. We'll respond within 2 hours!",
+      });
+
+      // Reset form
+      setFormData({
+        name: "",
+        phone: "",
+        service: "",
+        message: ""
+      });
+      
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const contactInfo = [
     {
       icon: Phone,
@@ -98,10 +216,10 @@ const Contact = () => {
                   <Phone className="mr-2 h-4 w-4" />
                   Call Now
                 </Button>
-                <Button variant="secondary" className="w-full hover-lift" size="lg">
+                <Button variant="secondary" className="w-full hover-lift" size="lg" onClick={() => setBuyFormOpen(true)}>
                   Get Quote
                 </Button>
-                <Button variant="outline" className="w-full hover-lift" size="lg">
+                <Button variant="outline" className="w-full hover-lift" size="lg" onClick={() => setBuyFormOpen(true)}>
                   Schedule Visit
                 </Button>
               </div>
@@ -137,27 +255,44 @@ const Contact = () => {
                 <span>Send Message</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <form onSubmit={handleContactSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Name</label>
-                  <Input placeholder="Your full name" className="hover:border-primary/50 transition-colors" />
+                  <label className="text-sm font-medium mb-2 block">Name *</label>
+                  <Input 
+                    placeholder="Your full name" 
+                    value={formData.name}
+                    onChange={(e) => handleInputChange('name', e.target.value)}
+                    className="hover:border-primary/50 transition-colors" 
+                    required
+                  />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Phone</label>
-                  <Input placeholder="Your phone number" className="hover:border-primary/50 transition-colors" />
+                  <label className="text-sm font-medium mb-2 block">Phone *</label>
+                  <Input 
+                    placeholder="Your phone number" 
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                    className="hover:border-primary/50 transition-colors" 
+                    required
+                  />
                 </div>
               </div>
               
               <div>
-                <label className="text-sm font-medium mb-2 block">Service Required</label>
-                <select className="w-full p-2 border border-input rounded-md bg-background hover:border-primary/50 transition-colors">
-                  <option>CCTV Installation</option>
-                  <option>LED TV Repair</option>
-                  <option>JIO Fiber Setup</option>
-                  <option>Home Theatre</option>
-                  <option>General Inquiry</option>
-                </select>
+                <label className="text-sm font-medium mb-2 block">Service Required *</label>
+                <Select value={formData.service} onValueChange={(value) => handleInputChange('service', value)}>
+                  <SelectTrigger className="hover:border-primary/50 transition-colors">
+                    <SelectValue placeholder="Select a service" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="CCTV Installation">CCTV Installation</SelectItem>
+                    <SelectItem value="LED TV Repair">LED TV Repair</SelectItem>
+                    <SelectItem value="JIO Fiber Setup">JIO Fiber Setup</SelectItem>
+                    <SelectItem value="Home Theatre">Home Theatre</SelectItem>
+                    <SelectItem value="General Inquiry">General Inquiry</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>
@@ -165,19 +300,25 @@ const Contact = () => {
                 <Textarea 
                   placeholder="Describe your requirements..."
                   rows={4}
+                  value={formData.message}
+                  onChange={(e) => handleInputChange('message', e.target.value)}
                   className="hover:border-primary/50 transition-colors"
                 />
               </div>
 
-              <Button className="w-full hover-lift glow-effect" size="lg">
+              <Button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="w-full hover-lift glow-effect" 
+                size="lg"
+              >
                 <Send className="mr-2 h-4 w-4" />
-                Send Message
+                {isSubmitting ? "Sending..." : "Send Message"}
               </Button>
-
-              <div className="text-center text-xs text-muted-foreground">
-                We'll respond within 2 hours during business hours
-              </div>
-            </CardContent>
+            </form>
+            <div className="text-center text-xs text-muted-foreground mt-4">
+              We'll respond within 2 hours during business hours
+            </div>
           </Card>
         </div>
 
@@ -194,6 +335,12 @@ const Contact = () => {
             </div>
           </div>
         </div>
+
+        <BuyForm 
+          isOpen={buyFormOpen}
+          onClose={() => setBuyFormOpen(false)}
+          selectedService=""
+        />
       </div>
     </section>
   );

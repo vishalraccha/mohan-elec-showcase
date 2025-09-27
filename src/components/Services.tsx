@@ -1,8 +1,27 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Monitor, Wifi, ArrowRight, CheckCircle } from "lucide-react";
+import BuyForm from "./BuyForm";
 
 const Services = () => {
+  const [buyFormOpen, setBuyFormOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<string>("");
+
+  const handleButtonClick = (buttonText: string, serviceTitle: string) => {
+    if (buttonText === "Get Quotation") {
+      const message = `Hi! I would like to get a quotation for ${serviceTitle}. Please provide details about pricing and installation.`;
+      const whatsappUrl = `https://wa.me/919370426583?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    } else if (buttonText === "Buy Now") {
+      setSelectedService(serviceTitle);
+      setBuyFormOpen(true);
+    } else if (buttonText === "Book Now") {
+      setSelectedService(serviceTitle);
+      setBuyFormOpen(true);
+    }
+  };
+
   const services = [
     {
       icon: Shield,
@@ -105,6 +124,7 @@ const Services = () => {
                   variant={service.buttonVariant}
                   className="w-full group/btn hover-lift glow-effect"
                   size="lg"
+                  onClick={() => handleButtonClick(service.buttonText, service.title)}
                 >
                   {service.buttonText}
                   <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
@@ -121,6 +141,12 @@ const Services = () => {
             <span className="font-medium">Licensed & Insured • Same Day Service Available</span>
           </div>
         </div>
+
+        <BuyForm 
+          isOpen={buyFormOpen}
+          onClose={() => setBuyFormOpen(false)}
+          selectedService={selectedService}
+        />
       </div>
     </section>
   );
