@@ -18,7 +18,7 @@ const Contact = () => {
       title: "Visit Store",
       details: "New Pacha Peth, Ashok Chowk",
       subtitle: "Solapur - 413006, Maharashtra",
-      action: "https://maps.google.com"
+      action: "https://maps.google.com/maps?q=New+Pacha+Peth,+Ashok+Chowk,+Solapur,+Maharashtra+413006"
     },
     {
       icon: Clock,
@@ -70,12 +70,14 @@ const Contact = () => {
                         <p className="text-sm font-medium mb-1">{info.details}</p>
                         <p className="text-xs text-muted-foreground">{info.subtitle}</p>
                         {info.action && (
-                          <a 
-                            href={info.action}
-                            className="inline-block mt-2 text-xs text-primary hover:underline"
-                          >
-                            {info.action.startsWith('tel:') ? 'Call Now' : 'Get Directions'}
-                          </a>
+                  <a 
+                    href={info.action}
+                    className="inline-block mt-2 text-xs text-primary hover:underline"
+                    target={info.action.startsWith('tel:') ? '_self' : '_blank'}
+                    rel={info.action.startsWith('tel:') ? '' : 'noopener noreferrer'}
+                  >
+                    {info.action.startsWith('tel:') ? 'Call Now' : 'Get Directions'}
+                  </a>
                         )}
                       </div>
                     </div>
@@ -88,7 +90,11 @@ const Contact = () => {
             <div className="space-y-4">
               <h3 className="text-xl font-bold">Quick Actions</h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <Button className="w-full hover-lift glow-effect" size="lg">
+                <Button 
+                  className="w-full hover-lift glow-effect" 
+                  size="lg"
+                  onClick={() => window.open('tel:9370426583', '_self')}
+                >
                   <Phone className="mr-2 h-4 w-4" />
                   Call Now
                 </Button>
@@ -177,7 +183,10 @@ const Contact = () => {
 
         {/* Emergency Contact */}
         <div className="mt-16 text-center">
-          <div className="inline-flex items-center space-x-4 bg-gradient-primary text-white rounded-full px-8 py-4 shadow-glow animate-glow">
+          <div 
+            className="inline-flex items-center space-x-4 bg-gradient-primary text-white rounded-full px-8 py-4 shadow-glow animate-glow cursor-pointer hover-lift"
+            onClick={() => window.open('tel:9370426583', '_self')}
+          >
             <Phone className="h-6 w-6" />
             <div>
               <div className="font-bold">24/7 Emergency Service</div>
