@@ -255,6 +255,7 @@ ${formData.name}`;
                 <span>Send Message</span>
               </CardTitle>
             </CardHeader>
+            <CardContent>
             <form onSubmit={handleContactSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -316,9 +317,11 @@ ${formData.name}`;
                 {isSubmitting ? "Sending..." : "Send Message"}
               </Button>
             </form>
-            <div className="text-center text-xs text-muted-foreground mt-4">
-              We'll respond within 2 hours during business hours
-            </div>
+              
+              <div className="text-center text-xs text-muted-foreground mt-4">
+                We'll respond within 2 hours during business hours
+              </div>
+            </CardContent>
           </Card>
         </div>
 
